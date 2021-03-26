@@ -1,20 +1,35 @@
 package com.example.triviasekai.androidApp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.triviasekai.shared.Greeting
-import android.widget.TextView
-
-fun greet(): String {
-    return Greeting().greeting()
-}
+import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.runtime.Composable
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContent {
+            Surface {
+                HomeScreen(getString(R.string.app_name))
+            }
+        }
+    }
+}
 
-        val tv: TextView = findViewById(R.id.text_view)
-        tv.text = greet()
+@Composable
+fun HomeScreen(title: String) {
+    Scaffold(
+        topBar = {
+            TopAppBar(title = {
+                Text(text = title)
+            })
+        }
+    ) {
+        Text(text = "Home screen")
     }
 }
