@@ -2,6 +2,7 @@ package com.example.triviasekai.androidApp
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -15,18 +16,20 @@ import com.example.triviasekai.androidApp.categories.CategoriesScreen
 
 class MainActivity : AppCompatActivity() {
 
+    private val viewModel by viewModels<TriviaViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             Surface {
-                HomeScreen(getString(R.string.app_name))
+                HomeScreen(getString(R.string.app_name), viewModel = viewModel)
             }
         }
     }
 }
 
 @Composable
-fun HomeScreen(title: String) {
+fun HomeScreen(title: String, viewModel: TriviaViewModel) {
     val navController = rememberNavController()
     Scaffold(
         topBar = {
@@ -36,7 +39,7 @@ fun HomeScreen(title: String) {
         }
     ) {
         NavHost(navController = navController, startDestination = "categories") {
-            composable("categories") { CategoriesScreen() }
+            composable("categories") { CategoriesScreen(viewModel = viewModel) }
         }
     }
 }

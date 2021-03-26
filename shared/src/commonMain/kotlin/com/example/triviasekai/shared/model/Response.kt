@@ -26,6 +26,11 @@ data class TriviaResult(
 )
 
 @Serializable
+data class TriviaCategories(
+    @SerialName("trivia_categories") val categories: List<Category>
+)
+
+@Serializable
 data class Category(@SerialName("id")val id: Int, val name: String)
 
 enum class Difficulty(val id: Int) {
