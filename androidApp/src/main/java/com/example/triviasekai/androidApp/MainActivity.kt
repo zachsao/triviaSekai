@@ -8,6 +8,10 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.triviasekai.androidApp.categories.CategoriesScreen
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
 @Composable
 fun HomeScreen(title: String) {
+    val navController = rememberNavController()
     Scaffold(
         topBar = {
             TopAppBar(title = {
@@ -30,6 +35,8 @@ fun HomeScreen(title: String) {
             })
         }
     ) {
-        Text(text = "Home screen")
+        NavHost(navController = navController, startDestination = "categories") {
+            composable("categories") { CategoriesScreen() }
+        }
     }
 }
