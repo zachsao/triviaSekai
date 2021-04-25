@@ -4,11 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Divider
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,8 +16,7 @@ import com.example.triviasekai.shared.model.Category
 
 @Composable
 fun CategoriesScreen(viewModel: TriviaViewModel, onLevelSelected: (Int, Int, String) -> Unit) {
-    val categoriesState = viewModel.categoriesSharedFlow().collectAsState(initial = listOf())
-    viewModel.getCategories()
+    val categoriesState = viewModel.categoriesSharedFlow().collectAsState(initial = null)
     CategoriesContent(list = categoriesState.value) { level, categoryId, title ->
         onLevelSelected(
             level,
@@ -30,23 +27,33 @@ fun CategoriesScreen(viewModel: TriviaViewModel, onLevelSelected: (Int, Int, Str
 }
 
 @Composable
-fun CategoriesContent(list: List<Category>, onLevelSelected: (Int, Int, String) -> Unit) {
+fun CategoriesContent(list: List<Category>?, onLevelSelected: (Int, Int, String) -> Unit) {
     val showDialog = remember { mutableStateOf(false) }
     val selectedCategory: MutableState<Category?> = remember { mutableStateOf(null) }
     Scaffold(
         topBar = { TopAppBar(title = { Text(text = "Select a category") }) }
     ) {
-        Column {
-            CategoriesList(list = list) {
-                showDialog.value = true
-                selectedCategory.value = it
+        list?.let {
+            Column {
+                CategoriesList(list = list) {
+                    showDialog.value = true
+                    selectedCategory.value = it
+                }
+                LevelDialog(showDialog.value, { showDialog.value = false }) { level ->
+                    onLevelSelected(
+                        level,
+                        selectedCategory.value?.id ?: error("No Category selected"),
+                        selectedCategory.value?.name ?: error("No Category selected")
+                    )
+                }
             }
-            LevelDialog(showDialog.value, { showDialog.value = false }) { level ->
-                onLevelSelected(
-                    level,
-                    selectedCategory.value?.id ?: error("No Category selected"),
-                    selectedCategory.value?.name ?: error("No Category selected")
-                )
+        } ?: run {
+            Column(
+                Modifier.fillMaxWidth().fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
     }

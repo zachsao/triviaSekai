@@ -31,6 +31,7 @@ private fun Content(question: Pair<TriviaResult, Int>?, category: String) {
             QuestionContent(result, index)
         } ?: run {
             Column(
+                Modifier.fillMaxWidth().fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {

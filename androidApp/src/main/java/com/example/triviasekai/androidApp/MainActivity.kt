@@ -46,7 +46,12 @@ class MainActivity : AppCompatActivity() {
 fun MainContainer(viewModel: TriviaViewModel) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
-        composable("home") { HomeScreen { navController.navigate("categories") } }
+        composable("home") {
+            HomeScreen {
+                viewModel.getCategories()
+                navController.navigate("categories")
+            }
+        }
         composable("categories") {
             CategoriesScreen(viewModel = viewModel) { _, categoryId, title ->
                 viewModel.getQuestions(categoryId)
