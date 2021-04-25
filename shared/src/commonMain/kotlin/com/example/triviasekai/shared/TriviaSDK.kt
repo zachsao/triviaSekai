@@ -8,8 +8,8 @@ class TriviaSDK {
     private val api = TriviaApi()
 
     @Throws(Exception::class)
-    suspend fun getQuestions(): Response {
-        return api.getQuestions()
+    suspend fun getQuestions(categoryId: Int): Response {
+        return api.getQuestions(categoryId)
     }
 
     @Throws(Exception::class)

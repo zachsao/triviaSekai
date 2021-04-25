@@ -17,16 +17,22 @@ import com.example.triviasekai.androidApp.TriviaViewModel
 import com.example.triviasekai.shared.model.Category
 
 @Composable
-fun CategoriesScreen(viewModel: TriviaViewModel, onLevelSelected: (Int, Int) -> Unit) {
+fun CategoriesScreen(viewModel: TriviaViewModel, onLevelSelected: (Int, Int, String) -> Unit) {
     val categoriesState = viewModel.categoriesSharedFlow().collectAsState(initial = listOf())
     viewModel.getCategories()
-    CategoriesContent(list = categoriesState.value) { level, categoryId -> onLevelSelected(level, categoryId) }
+    CategoriesContent(list = categoriesState.value) { level, categoryId, title ->
+        onLevelSelected(
+            level,
+            categoryId,
+            title
+        )
+    }
 }
 
 @Composable
-fun CategoriesContent(list: List<Category>, onLevelSelected: (Int, Int) -> Unit) {
+fun CategoriesContent(list: List<Category>, onLevelSelected: (Int, Int, String) -> Unit) {
     val showDialog = remember { mutableStateOf(false) }
-    val selectedCategory: MutableState<Int?> = remember { mutableStateOf(null)}
+    val selectedCategory: MutableState<Category?> = remember { mutableStateOf(null) }
     Scaffold(
         topBar = { TopAppBar(title = { Text(text = "Select a category") }) }
     ) {
@@ -36,7 +42,11 @@ fun CategoriesContent(list: List<Category>, onLevelSelected: (Int, Int) -> Unit)
                 selectedCategory.value = it
             }
             LevelDialog(showDialog.value, { showDialog.value = false }) { level ->
-                onLevelSelected(level, selectedCategory.value ?: error("No Category selected"))
+                onLevelSelected(
+                    level,
+                    selectedCategory.value?.id ?: error("No Category selected"),
+                    selectedCategory.value?.name ?: error("No Category selected")
+                )
             }
         }
     }
@@ -44,7 +54,7 @@ fun CategoriesContent(list: List<Category>, onLevelSelected: (Int, Int) -> Unit)
 }
 
 @Composable
-fun CategoriesList(list: List<Category>, onItemClick: (Int) -> Unit) {
+fun CategoriesList(list: List<Category>, onItemClick: (Category) -> Unit) {
     LazyColumn(
         Modifier.fillMaxHeight(1f),
         contentPadding = PaddingValues(16.dp)
@@ -55,7 +65,7 @@ fun CategoriesList(list: List<Category>, onItemClick: (Int) -> Unit) {
                 Modifier
                     .fillMaxWidth(1f)
                     .padding(top = 8.dp, bottom = 8.dp)
-                    .clickable(onClick = { onItemClick(it.id) }),
+                    .clickable(onClick = { onItemClick(it) }),
                 textAlign = TextAlign.Center
             )
             Divider()
@@ -73,5 +83,5 @@ fun ScreenPreview() {
             Category(0, "Maths"),
             Category(0, "Gen. Knowledge")
         )
-    ) { _, _ -> }
+    ) { _, _, _ -> }
 }

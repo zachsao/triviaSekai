@@ -21,8 +21,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavType
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigate
+import androidx.navigation.compose.rememberNavController
 import com.example.triviasekai.androidApp.categories.CategoriesScreen
 import com.example.triviasekai.androidApp.questions.QuestionsScreen
 
@@ -46,15 +48,13 @@ fun MainContainer(viewModel: TriviaViewModel) {
     NavHost(navController = navController, startDestination = "home") {
         composable("home") { HomeScreen { navController.navigate("categories") } }
         composable("categories") {
-            CategoriesScreen(viewModel = viewModel) { _, categoryId ->
-                navController.navigate("questions/$categoryId")
+            CategoriesScreen(viewModel = viewModel) { _, categoryId, title ->
+                viewModel.getQuestions(categoryId)
+                navController.navigate("questions/$title")
             }
         }
-        composable(
-            "questions/{categoryId}",
-            arguments = listOf(navArgument("categoryId") { type = NavType.IntType })
-        ) {
-            QuestionsScreen(it.arguments?.getInt("categoryId") ?: error("Unknown category Id"))
+        composable("questions/{categoryId}") {
+            QuestionsScreen(viewModel, it.arguments?.getString("categoryId") ?: error("Unknown category"))
         }
     }
 }
