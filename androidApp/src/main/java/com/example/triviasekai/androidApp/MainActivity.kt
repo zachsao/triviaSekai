@@ -59,7 +59,8 @@ fun MainContainer(viewModel: TriviaViewModel) {
             }
         }
         composable("questions/{categoryId}") {
-            QuestionsScreen(viewModel, it.arguments?.getString("categoryId") ?: error("Unknown category"))
+            val category = it.arguments?.getString("categoryId") ?: error("Unknown category")
+            QuestionsScreen(viewModel, category) { navController.popBackStack() }
         }
     }
 }

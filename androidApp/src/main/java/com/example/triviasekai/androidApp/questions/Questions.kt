@@ -5,6 +5,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -17,21 +19,35 @@ import com.example.triviasekai.androidApp.TriviaViewModel
 import com.example.triviasekai.shared.model.TriviaResult
 
 @Composable
-fun QuestionsScreen(viewModel: TriviaViewModel, category: String) {
+fun QuestionsScreen(viewModel: TriviaViewModel, category: String, onBackClick: () -> Unit) {
     val questionState = viewModel.currentQuestionSharedFlow().collectAsState(initial = null)
-    Content(questionState.value, category)
+    Content(questionState.value, category, onBackClick)
 }
 
 @Composable
-private fun Content(question: Pair<TriviaResult, Int>?, category: String) {
+private fun Content(question: Pair<TriviaResult, Int>?, category: String, onBackClick: () -> Unit) {
     Scaffold(
-        topBar = { TopAppBar(title = { Text(text = category) }) }
+        topBar = {
+            TopAppBar(
+                title = { Text(text = category) },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "arrow back"
+                        )
+                    }
+                }
+            )
+        },
     ) {
         question?.let { (result, index) ->
             QuestionContent(result, index)
         } ?: run {
             Column(
-                Modifier.fillMaxWidth().fillMaxHeight(),
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
