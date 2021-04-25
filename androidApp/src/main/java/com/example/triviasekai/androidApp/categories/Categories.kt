@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -21,7 +21,7 @@ import com.example.triviasekai.shared.model.Category
 
 @Composable
 fun CategoriesScreen(viewModel: TriviaViewModel) {
-    val categoriesState = viewModel.categoriesLiveData().observeAsState(initial = listOf())
+    val categoriesState = viewModel.categoriesSharedFlow().collectAsState(initial = listOf())
     viewModel.getCategories()
     CategoriesContent(list = categoriesState.value)
 }
