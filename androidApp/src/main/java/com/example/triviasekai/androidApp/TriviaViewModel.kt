@@ -47,4 +47,14 @@ class TriviaViewModel : ViewModel() {
             currentQuestionSharedFlow.emit(Pair(results.first(), 0))
         }
     }
+
+    fun nextQuestion(index: Int) {
+        viewModelScope.launch {
+            questions?.let {
+                if (index < it.size) {
+                    currentQuestionSharedFlow.emit(Pair(it[index], index))
+                }
+            }
+        }
+    }
 }
