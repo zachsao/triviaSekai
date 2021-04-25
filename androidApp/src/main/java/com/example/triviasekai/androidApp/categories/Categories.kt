@@ -8,10 +8,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,28 +17,34 @@ import com.example.triviasekai.androidApp.TriviaViewModel
 import com.example.triviasekai.shared.model.Category
 
 @Composable
-fun CategoriesScreen(viewModel: TriviaViewModel) {
+fun CategoriesScreen(viewModel: TriviaViewModel, onLevelSelected: (Int, Int) -> Unit) {
     val categoriesState = viewModel.categoriesSharedFlow().collectAsState(initial = listOf())
     viewModel.getCategories()
-    CategoriesContent(list = categoriesState.value)
+    CategoriesContent(list = categoriesState.value) { level, categoryId -> onLevelSelected(level, categoryId) }
 }
 
 @Composable
-fun CategoriesContent(list: List<Category>) {
+fun CategoriesContent(list: List<Category>, onLevelSelected: (Int, Int) -> Unit) {
     val showDialog = remember { mutableStateOf(false) }
+    val selectedCategory: MutableState<Int?> = remember { mutableStateOf(null)}
     Scaffold(
         topBar = { TopAppBar(title = { Text(text = "Select a category") }) }
     ) {
         Column {
-            CategoriesList(list = list) { showDialog.value = true }
-            LevelDialog(showDialog.value) { showDialog.value = false }
+            CategoriesList(list = list) {
+                showDialog.value = true
+                selectedCategory.value = it
+            }
+            LevelDialog(showDialog.value, { showDialog.value = false }) { level ->
+                onLevelSelected(level, selectedCategory.value ?: error("No Category selected"))
+            }
         }
     }
 
 }
 
 @Composable
-fun CategoriesList(list: List<Category>, onItemClick: () -> Unit) {
+fun CategoriesList(list: List<Category>, onItemClick: (Int) -> Unit) {
     LazyColumn(
         Modifier.fillMaxHeight(1f),
         contentPadding = PaddingValues(16.dp)
@@ -52,7 +55,7 @@ fun CategoriesList(list: List<Category>, onItemClick: () -> Unit) {
                 Modifier
                     .fillMaxWidth(1f)
                     .padding(top = 8.dp, bottom = 8.dp)
-                    .clickable(onClick = onItemClick),
+                    .clickable(onClick = { onItemClick(it.id) }),
                 textAlign = TextAlign.Center
             )
             Divider()
@@ -70,5 +73,5 @@ fun ScreenPreview() {
             Category(0, "Maths"),
             Category(0, "Gen. Knowledge")
         )
-    )
+    ) { _, _ -> }
 }

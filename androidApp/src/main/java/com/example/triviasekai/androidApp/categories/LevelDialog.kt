@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.example.triviasekai.shared.model.Difficulty
 
 @Composable
-fun LevelDialog(show: Boolean, onDismiss: () -> Unit) {
+fun LevelDialog(show: Boolean, onDismiss: () -> Unit, onPositiveClick: (Int) -> Unit) {
     if (show) {
         val selectedLevel = remember { mutableStateOf(0) }
         val onLevelSelected: (Int) -> Unit = { index -> selectedLevel.value = index }
@@ -48,7 +48,7 @@ fun LevelDialog(show: Boolean, onDismiss: () -> Unit) {
                             TextButton(contentPadding = PaddingValues(16.dp), onClick = onDismiss) {
                                 Text(text = "CANCEL")
                             }
-                            TextButton(contentPadding = PaddingValues(16.dp), onClick = { /*TODO*/ }) {
+                            TextButton(contentPadding = PaddingValues(16.dp), onClick = { onPositiveClick(selectedLevel.value) }) {
                                 Text(text = "OK")
                             }
                         }
@@ -63,5 +63,5 @@ fun LevelDialog(show: Boolean, onDismiss: () -> Unit) {
 @Preview
 @Composable
 fun LevelDialogPreview() {
-    LevelDialog(true) {}
+    LevelDialog(true, {}) {}
 }
