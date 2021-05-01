@@ -20,6 +20,8 @@ class TriviaViewModel : ViewModel() {
     private val triviaSDK = TriviaSDK()
 
     private var questions: List<TriviaResult>? = null
+    private var currentCategory: Int? = null
+    private var score = 0
 
     fun categoriesSharedFlow(): SharedFlow<List<Category>> = categoriesSharedFlow.asSharedFlow()
     fun currentQuestionSharedFlow(): SharedFlow<Pair<TriviaResult, Int>> =
@@ -34,6 +36,7 @@ class TriviaViewModel : ViewModel() {
     }
 
     fun getQuestions(categoryId: Int) {
+        currentCategory = categoryId
         viewModelScope.launch {
             val results = triviaSDK.getQuestions(categoryId).results
             Log.d("zsao", "${results.size} results retrieved")
@@ -48,13 +51,23 @@ class TriviaViewModel : ViewModel() {
         }
     }
 
-    fun nextQuestion(index: Int) {
+    fun nextQuestion(index: Int, isCorrect: Boolean, navigate: () -> Unit) {
+        if (isCorrect) score += 1
         viewModelScope.launch {
             questions?.let {
                 if (index < it.size) {
                     currentQuestionSharedFlow.emit(Pair(it[index], index))
+                } else {
+                    navigate()
                 }
             }
         }
+    }
+
+    fun score() = Pair(score, questions?.size)
+
+    fun startOver() {
+        score = 0
+        currentCategory?.let { getQuestions(it) }
     }
 }

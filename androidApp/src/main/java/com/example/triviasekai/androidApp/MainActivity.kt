@@ -21,10 +21,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigate
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import com.example.triviasekai.androidApp.categories.CategoriesScreen
 import com.example.triviasekai.androidApp.questions.QuestionsScreen
 
@@ -55,12 +52,21 @@ fun MainContainer(viewModel: TriviaViewModel) {
         composable("categories") {
             CategoriesScreen(viewModel = viewModel) { _, categoryId, title ->
                 viewModel.getQuestions(categoryId)
-                navController.navigate("questions/$title")
+                navController.navigate("questions")
             }
         }
-        composable("questions/{categoryId}") {
-            val category = it.arguments?.getString("categoryId") ?: error("Unknown category")
-            QuestionsScreen(viewModel, category) { navController.popBackStack() }
+        composable("questions") {
+            QuestionsScreen(
+                viewModel,
+                { navController.popBackStack() },
+                { navController.navigate("endGame") { popUpTo(route = "categories"){} } }
+            )
+        }
+        composable("endGame") {
+            EndGameScreen(viewModel = viewModel) {
+                viewModel.startOver()
+                navController.navigate("questions") { popUpTo(route = "categories"){} }
+            }
         }
     }
 }

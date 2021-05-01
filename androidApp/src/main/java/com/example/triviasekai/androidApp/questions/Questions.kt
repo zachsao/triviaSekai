@@ -19,20 +19,29 @@ import com.example.triviasekai.androidApp.TriviaViewModel
 import com.example.triviasekai.shared.model.TriviaResult
 
 @Composable
-fun QuestionsScreen(viewModel: TriviaViewModel, category: String, onBackClick: () -> Unit) {
+fun QuestionsScreen(
+    viewModel: TriviaViewModel,
+    onBackClick: () -> Unit,
+    onLastAnswerClicked: () -> Unit
+) {
     val questionState = viewModel.currentQuestionSharedFlow().collectAsState(initial = null)
-    Content(questionState.value, category, onBackClick) {viewModel.nextQuestion(it)}
+    Content(
+        questionState.value,
+        onBackClick
+    ) { index, isCorrect ->
+        viewModel.nextQuestion(index, isCorrect, onLastAnswerClicked)
+    }
 }
 
 @Composable
 private fun Content(
-    question: Pair<TriviaResult, Int>?, category: String, onBackClick: () -> Unit,
-    onAnswerClicked: (Int) -> Unit
+    question: Pair<TriviaResult, Int>?, onBackClick: () -> Unit,
+    onAnswerClicked: (Int, Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = category) },
+                title = { Text(text = question?.first?.category ?: "") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -45,7 +54,7 @@ private fun Content(
         },
     ) {
         question?.let { (result, index) ->
-            QuestionContent(result, index) { onAnswerClicked(index.inc()) }
+            QuestionContent(result) { isCorrect -> onAnswerClicked(index.inc(), isCorrect) }
         } ?: run {
             Column(
                 Modifier
@@ -61,7 +70,10 @@ private fun Content(
 }
 
 @Composable
-private fun QuestionContent(currentResult: TriviaResult, index: Int, onAnswerClicked: () -> Unit) {
+private fun QuestionContent(
+    currentResult: TriviaResult,
+    onAnswerClicked: (Boolean) -> Unit
+) {
     Column(
         Modifier
             .fillMaxHeight()
@@ -70,7 +82,7 @@ private fun QuestionContent(currentResult: TriviaResult, index: Int, onAnswerCli
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = "Difficulty: ${currentResult.difficulty}", Modifier.padding(16.dp))
-        Text(text = "${index.inc()}/10", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        // Text(text = "${index.inc()}/10", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Card(
             Modifier
                 .fillMaxWidth()
@@ -91,7 +103,7 @@ private fun QuestionContent(currentResult: TriviaResult, index: Int, onAnswerCli
                 }
                 items(currentResult.shuffleAnswers()) { (answer, isCorrect) ->
                     OutlinedButton(
-                        onClick = onAnswerClicked,
+                        onClick = { onAnswerClicked(isCorrect) },
                         Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
@@ -114,8 +126,7 @@ fun QuestionPreview() {
             incorrectAnswers = listOf("abc", "xyz"),
             correctAnswer = "def",
             category = "category"
-        ),
-        index = 0
+        )
     ) {}
 }
 
