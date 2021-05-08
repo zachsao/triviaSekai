@@ -1,6 +1,5 @@
 package com.example.triviasekai.androidApp.categories
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,7 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.triviasekai.androidApp.R
 import com.example.triviasekai.androidApp.TriviaViewModel
+import com.example.triviasekai.androidApp.ui.TriviaColors
 import com.example.triviasekai.androidApp.ui.TriviaIcon
 import com.example.triviasekai.androidApp.ui.TriviaIcons
-import com.example.triviasekai.shared.model.Category
 
 @Composable
 fun CategoriesScreen(viewModel: TriviaViewModel, onLevelSelected: (Int, Int, String) -> Unit) {
@@ -34,9 +33,9 @@ fun CategoriesScreen(viewModel: TriviaViewModel, onLevelSelected: (Int, Int, Str
 }
 
 @Composable
-fun CategoriesContent(list: List<Category>?, onLevelSelected: (Int, Int, String) -> Unit) {
+fun CategoriesContent(list: List<CategoryViewItem>?, onLevelSelected: (Int, Int, String) -> Unit) {
     val showDialog = remember { mutableStateOf(false) }
-    val selectedCategory: MutableState<Category?> = remember { mutableStateOf(null) }
+    val selectedCategory: MutableState<CategoryViewItem?> = remember { mutableStateOf(null) }
     Scaffold(
         topBar = { TopAppBar(title = { Text(text = "Select a category") }) }
     ) {
@@ -70,7 +69,7 @@ fun CategoriesContent(list: List<Category>?, onLevelSelected: (Int, Int, String)
 }
 
 @Composable
-fun CategoriesList(list: List<Category>, onItemClick: (Category) -> Unit) {
+fun CategoriesList(list: List<CategoryViewItem>, onItemClick: (CategoryViewItem) -> Unit) {
     LazyColumn(
         Modifier.fillMaxHeight(1f),
         contentPadding = PaddingValues(16.dp)
@@ -85,28 +84,27 @@ fun CategoriesList(list: List<Category>, onItemClick: (Category) -> Unit) {
 }
 
 @Composable
-fun CategoryItem(category: Category, modifier: Modifier) {
+fun CategoryItem(category: CategoryViewItem, modifier: Modifier) {
     Column {
         Spacer(modifier = Modifier.size(4.dp))
-        Card(Modifier.fillMaxWidth()) {
-            Surface(modifier.padding(16.dp)) {
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TriviaIcon(
-                        resourceId = (TriviaIcons.values()
-                            .find { it.id == category.id })?.resourceId
-                            ?: TriviaIcons.Knowledge.resourceId,
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Text(
-                        text = category.name,
-                        modifier = Modifier.padding(16.dp),
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.roboto_bold_italic))
-                    )
-                }
+        Card(modifier.fillMaxWidth(), backgroundColor = Color(category.color.color)) {
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                TriviaIcon(
+                    resourceId = (TriviaIcons.values()
+                        .find { it.id == category.id })?.resourceId
+                        ?: TriviaIcons.Knowledge.resourceId,
+                    modifier = Modifier.size(48.dp)
+                )
+                Text(
+                    text = category.name,
+                    modifier = Modifier.padding(16.dp),
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.roboto_bold_italic))
+                )
             }
         }
         Spacer(modifier = Modifier.size(4.dp))
@@ -116,7 +114,10 @@ fun CategoryItem(category: Category, modifier: Modifier) {
 @Preview
 @Composable
 fun CategoryItemPreview() {
-    CategoryItem(Category(0, "title"), Modifier.fillMaxWidth())
+    CategoryItem(
+        CategoryViewItem(0, "title", TriviaIcons.Knowledge, TriviaColors.White),
+        Modifier.fillMaxWidth()
+    )
 }
 
 @Preview
@@ -124,10 +125,15 @@ fun CategoryItemPreview() {
 fun ScreenPreview() {
     CategoriesContent(
         list = listOf(
-            Category(0, "Entertainment"),
-            Category(0, "Sports"),
-            Category(0, "Maths"),
-            Category(0, "General Knowledge or something even longer to break the layout")
+            CategoryViewItem(0, "Entertainment", TriviaIcons.Knowledge, TriviaColors.White),
+            CategoryViewItem(0, "Sports", TriviaIcons.Knowledge, TriviaColors.White),
+            CategoryViewItem(0, "Maths", TriviaIcons.Knowledge, TriviaColors.White),
+            CategoryViewItem(
+                0,
+                "General Knowledge or something even longer to break the layout",
+                TriviaIcons.Knowledge,
+                TriviaColors.White
+            )
         )
     ) { _, _, _ -> }
 }
