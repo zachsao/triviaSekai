@@ -18,15 +18,15 @@ class TriviaApi {
         }
     }
 
-    private val triviaEndpoint: (Int, Int) -> String = { categoryId, amount ->
-        "https://opentdb.com/api.php?amount=$amount&category=$categoryId"
+    private val triviaEndpoint: (Int, String, Int) -> String = { categoryId, difficulty, amount ->
+        "https://opentdb.com/api.php?amount=$amount&category=$categoryId&difficulty=$difficulty"
     }
 
     suspend fun getCategories(): TriviaCategories {
         return httpClient.get(BASE_URL + "api_category.php")
     }
 
-    suspend fun getQuestions(categoryId: Int = 31, amount: Int = 10): Response {
-        return httpClient.get(triviaEndpoint(categoryId, amount))
+    suspend fun getQuestions(categoryId: Int, difficulty: String, amount: Int = 10): Response {
+        return httpClient.get(triviaEndpoint(categoryId, difficulty, amount))
     }
 }

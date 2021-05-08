@@ -1,6 +1,7 @@
 package com.example.triviasekai.shared
 
 import android.text.Html
+import com.example.triviasekai.shared.model.Difficulty
 import com.example.triviasekai.shared.model.Response
 import com.example.triviasekai.shared.model.TriviaCategories
 import com.example.triviasekai.shared.network.TriviaApi
@@ -9,8 +10,8 @@ class TriviaSDK {
     private val api = TriviaApi()
 
     @Throws(Exception::class)
-    suspend fun getQuestions(categoryId: Int): Response {
-        val response = api.getQuestions(categoryId)
+    suspend fun getQuestions(categoryId: Int, difficulty: String): Response {
+        val response = api.getQuestions(categoryId, difficulty)
         val decodedResults = response.results.map { result ->
             result.copy(
                 question = Html.fromHtml(result.question, Html.FROM_HTML_MODE_LEGACY).toString(),

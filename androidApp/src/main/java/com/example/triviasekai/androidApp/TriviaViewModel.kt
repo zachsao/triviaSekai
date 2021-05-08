@@ -1,8 +1,6 @@
 package com.example.triviasekai.androidApp
 
-import android.text.Html
 import android.util.Log
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.triviasekai.androidApp.categories.CategoryViewItem
@@ -10,11 +8,13 @@ import com.example.triviasekai.androidApp.ui.TriviaColors
 import com.example.triviasekai.androidApp.ui.TriviaIcons
 import com.example.triviasekai.shared.TriviaSDK
 import com.example.triviasekai.shared.model.Category
+import com.example.triviasekai.shared.model.Difficulty
 import com.example.triviasekai.shared.model.TriviaResult
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import java.util.*
 
 class TriviaViewModel : ViewModel() {
 
@@ -24,6 +24,7 @@ class TriviaViewModel : ViewModel() {
 
     private var questions: List<TriviaResult>? = null
     private var currentCategory: Int? = null
+    private var currentDifficulty: Difficulty? = null
     private var score = 0
 
     fun categoriesSharedFlow(): SharedFlow<List<CategoryViewItem>> =
@@ -40,11 +41,12 @@ class TriviaViewModel : ViewModel() {
         }
     }
 
-    fun getQuestions(categoryId: Int) {
+    fun getQuestions(categoryId: Int, difficulty: Difficulty) {
         currentCategory = categoryId
+        currentDifficulty = difficulty
         viewModelScope.launch {
-            val results = triviaSDK.getQuestions(categoryId).results
-            Log.d("zsao", "${results.size} results retrieved")
+            val results =
+                triviaSDK.getQuestions(categoryId, difficulty.name.toLowerCase(Locale.ROOT)).results
             questions = results
             currentQuestionSharedFlow.emit(Pair(results.first(), 0))
         }
@@ -67,7 +69,7 @@ class TriviaViewModel : ViewModel() {
 
     fun startOver() {
         score = 0
-        currentCategory?.let { getQuestions(it) }
+        currentCategory?.let { getQuestions(it, currentDifficulty ?: Difficulty.Easy) }
     }
 
     private fun Category.toViewItem(): CategoryViewItem {

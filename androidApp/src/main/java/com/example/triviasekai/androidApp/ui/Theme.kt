@@ -27,25 +27,14 @@ enum class TriviaColors(val id: Int, val color: Long) {
     White(0, 0xffffffff)
 }
 
-val Red100 = Color(0xffffcdd2)
-val Pink100 = Color(0xfff8bbd0)
-val Purple100 = Color(0xffe1bee7)
-val DeepPurple100 = Color(0xffd1c4e9)
-val Indigo100 = Color(0xffc5cae9)
-val Blue100 = Color(0xffbbdefb)
-val LightBlue100 = Color(0xffb3e5fc)
-val Cyan100 = Color(0xffb2ebf2)
-val Teal100 = Color(0xffb2dfdb)
-val Green100 = Color(0xffc8e6c9)
-val LightGreen100 = Color(0xffdcedc8)
-val Lime100 = Color(0xfff0f4c3)
-val Yellow100 = Color(0xfffff9c4)
-val Amber100 = Color(0xffffecb3)
-val Orange100 = Color(0xffffe0b2)
-val DeepOrange100 = Color(0xffffccbc)
-val Brown100 = Color(0xffd7ccc8)
-val Grey100 = Color(0xfff5f5f5)
-val BlueGrey100 = Color(0xffcfd8dc)
+val Green700 = Color(0xff388e3c)
+val Green200 = Color(0xffa5d6a7)
+
+val Yellow700 = Color(0xfffbc02d)
+val Yellow200 = Color(0xfffff59d)
+
+val Red200 = Color(0xffef9a9a)
+val Red700 = Color(0xffd32f2f)
 
 
 @Composable

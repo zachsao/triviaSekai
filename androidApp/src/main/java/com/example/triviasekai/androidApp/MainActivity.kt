@@ -53,8 +53,8 @@ fun MainContainer(viewModel: TriviaViewModel) {
             }
         }
         composable("categories") {
-            CategoriesScreen(viewModel = viewModel) { _, categoryId, title ->
-                viewModel.getQuestions(categoryId)
+            CategoriesScreen(viewModel = viewModel) { level, categoryId, title ->
+                viewModel.getQuestions(categoryId, level)
                 navController.navigate("questions")
             }
         }

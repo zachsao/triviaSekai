@@ -1,5 +1,7 @@
 package com.example.triviasekai.androidApp.questions
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,12 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.triviasekai.androidApp.TriviaViewModel
+import com.example.triviasekai.androidApp.ui.*
+import com.example.triviasekai.shared.model.Difficulty
 import com.example.triviasekai.shared.model.TriviaResult
+import java.util.*
 
 @Composable
 fun QuestionsScreen(
@@ -81,8 +87,19 @@ private fun QuestionContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Difficulty: ${currentResult.difficulty}", Modifier.padding(16.dp))
-        // Text(text = "${index.inc()}/10", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        val (textBackgroundColor, textColor) = difficultyColor(currentResult.difficulty)
+        Surface(
+            Modifier.padding(top = 16.dp),
+            color = textBackgroundColor,
+            border = BorderStroke(2.dp, textColor),
+            shape = RoundedCornerShape(4.dp)
+        ) {
+            Text(
+                text = currentResult.difficulty.capitalize(Locale.ROOT),
+                Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                color = textColor
+            )
+        }
         Card(
             Modifier
                 .fillMaxWidth()
@@ -132,4 +149,12 @@ fun QuestionPreview() {
 
 fun TriviaResult.shuffleAnswers(): List<Pair<String, Boolean>> {
     return incorrectAnswers.map { Pair(it, false) }.plus(Pair(correctAnswer, true)).shuffled()
+}
+
+private fun difficultyColor(difficulty: String): Pair<Color, Color> {
+    return when (Difficulty.valueOf(difficulty.capitalize(Locale.ROOT))) {
+        Difficulty.Easy -> Pair(Green200, Green700)
+        Difficulty.Medium -> Pair(Yellow200, Yellow700)
+        Difficulty.Hard -> Pair(Red200, Red700)
+    }
 }

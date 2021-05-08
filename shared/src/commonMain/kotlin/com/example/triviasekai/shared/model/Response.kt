@@ -33,8 +33,6 @@ data class TriviaCategories(
 @Serializable
 data class Category(@SerialName("id")val id: Int, val name: String)
 
-enum class Difficulty(val id: Int) {
-    easy(0),
-    medium(2),
-    hard(3)
+enum class Difficulty {
+    Easy, Medium, Hard
 }

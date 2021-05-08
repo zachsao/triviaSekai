@@ -19,13 +19,14 @@ import com.example.triviasekai.androidApp.TriviaViewModel
 import com.example.triviasekai.androidApp.ui.TriviaColors
 import com.example.triviasekai.androidApp.ui.TriviaIcon
 import com.example.triviasekai.androidApp.ui.TriviaIcons
+import com.example.triviasekai.shared.model.Difficulty
 
 @Composable
-fun CategoriesScreen(viewModel: TriviaViewModel, onLevelSelected: (Int, Int, String) -> Unit) {
+fun CategoriesScreen(viewModel: TriviaViewModel, onLevelSelected: (Difficulty, Int, String) -> Unit) {
     val categoriesState = viewModel.categoriesSharedFlow().collectAsState(initial = null)
-    CategoriesContent(list = categoriesState.value) { level, categoryId, title ->
+    CategoriesContent(list = categoriesState.value) { difficulty, categoryId, title ->
         onLevelSelected(
-            level,
+            difficulty,
             categoryId,
             title
         )
@@ -33,7 +34,7 @@ fun CategoriesScreen(viewModel: TriviaViewModel, onLevelSelected: (Int, Int, Str
 }
 
 @Composable
-fun CategoriesContent(list: List<CategoryViewItem>?, onLevelSelected: (Int, Int, String) -> Unit) {
+fun CategoriesContent(list: List<CategoryViewItem>?, onLevelSelected: (Difficulty, Int, String) -> Unit) {
     val showDialog = remember { mutableStateOf(false) }
     val selectedCategory: MutableState<CategoryViewItem?> = remember { mutableStateOf(null) }
     Scaffold(
@@ -45,9 +46,9 @@ fun CategoriesContent(list: List<CategoryViewItem>?, onLevelSelected: (Int, Int,
                     showDialog.value = true
                     selectedCategory.value = it
                 }
-                LevelDialog(showDialog.value, { showDialog.value = false }) { level ->
+                DifficultyDialog(showDialog.value, { showDialog.value = false }) { difficulty ->
                     onLevelSelected(
-                        level,
+                        difficulty,
                         selectedCategory.value?.id ?: error("No Category selected"),
                         selectedCategory.value?.name ?: error("No Category selected")
                     )
