@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.*
 import com.example.triviasekai.androidApp.categories.CategoriesScreen
 import com.example.triviasekai.androidApp.questions.QuestionsScreen
+import com.example.triviasekai.androidApp.ui.TriviaTheme
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,8 +33,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Surface {
-                MainContainer(viewModel = viewModel)
+            TriviaTheme {
+                Surface {
+                    MainContainer(viewModel = viewModel)
+                }
             }
         }
     }
