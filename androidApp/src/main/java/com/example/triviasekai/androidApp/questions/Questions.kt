@@ -87,17 +87,16 @@ private fun QuestionContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        val (textBackgroundColor, textColor) = difficultyColor(currentResult.difficulty)
+        val (textBackgroundColor, borderColor) = difficultyColor(currentResult.difficulty)
         Surface(
             Modifier.padding(top = 16.dp),
             color = textBackgroundColor,
-            border = BorderStroke(2.dp, textColor),
+            border = BorderStroke(2.dp, borderColor),
             shape = RoundedCornerShape(4.dp)
         ) {
             Text(
                 text = currentResult.difficulty.capitalize(Locale.ROOT),
-                Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-                color = textColor
+                Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
             )
         }
         Card(

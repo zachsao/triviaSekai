@@ -24,7 +24,7 @@ class TriviaViewModel : ViewModel() {
 
     private var questions: List<TriviaResult>? = null
     private var currentCategory: Int? = null
-    private var currentDifficulty: Difficulty? = null
+    private var currentDifficulty: Difficulty = Difficulty.Easy
     private var score = 0
 
     fun categoriesSharedFlow(): SharedFlow<List<CategoryViewItem>> =
@@ -41,12 +41,11 @@ class TriviaViewModel : ViewModel() {
         }
     }
 
-    fun getQuestions(categoryId: Int, difficulty: Difficulty) {
+    fun getQuestions(categoryId: Int) {
         currentCategory = categoryId
-        currentDifficulty = difficulty
         viewModelScope.launch {
             val results =
-                triviaSDK.getQuestions(categoryId, difficulty.name.toLowerCase(Locale.ROOT)).results
+                triviaSDK.getQuestions(categoryId, currentDifficulty.name.toLowerCase(Locale.ROOT)).results
             questions = results
             currentQuestionSharedFlow.emit(Pair(results.first(), 0))
         }
@@ -69,7 +68,7 @@ class TriviaViewModel : ViewModel() {
 
     fun startOver() {
         score = 0
-        currentCategory?.let { getQuestions(it, currentDifficulty ?: Difficulty.Easy) }
+        currentCategory?.let { getQuestions(it) }
     }
 
     private fun Category.toViewItem(): CategoryViewItem {
@@ -79,5 +78,9 @@ class TriviaViewModel : ViewModel() {
             icon = TriviaIcons.values().find { it.id == id } ?: TriviaIcons.Knowledge,
             TriviaColors.values().find { it.id == id } ?: TriviaColors.values().random()
         )
+    }
+
+    fun selectDifficulty(difficulty: Difficulty) {
+        currentDifficulty = difficulty
     }
 }

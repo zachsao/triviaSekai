@@ -1,5 +1,6 @@
 package com.example.triviasekai.androidApp.categories
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,43 +17,42 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.triviasekai.androidApp.R
 import com.example.triviasekai.androidApp.TriviaViewModel
-import com.example.triviasekai.androidApp.ui.TriviaColors
-import com.example.triviasekai.androidApp.ui.TriviaIcon
-import com.example.triviasekai.androidApp.ui.TriviaIcons
+import com.example.triviasekai.androidApp.ui.*
 import com.example.triviasekai.shared.model.Difficulty
 
 @Composable
-fun CategoriesScreen(viewModel: TriviaViewModel, onLevelSelected: (Difficulty, Int, String) -> Unit) {
+fun CategoriesScreen(
+    viewModel: TriviaViewModel,
+    onItemClick: (Int) -> Unit
+) {
     val categoriesState = viewModel.categoriesSharedFlow().collectAsState(initial = null)
-    CategoriesContent(list = categoriesState.value) { difficulty, categoryId, title ->
-        onLevelSelected(
-            difficulty,
-            categoryId,
-            title
-        )
-    }
+    CategoriesContent(list = categoriesState.value, { categoryId ->
+        onItemClick(categoryId)
+    }) { viewModel.selectDifficulty(it) }
 }
 
 @Composable
-fun CategoriesContent(list: List<CategoryViewItem>?, onLevelSelected: (Difficulty, Int, String) -> Unit) {
-    val showDialog = remember { mutableStateOf(false) }
-    val selectedCategory: MutableState<CategoryViewItem?> = remember { mutableStateOf(null) }
+fun CategoriesContent(
+    list: List<CategoryViewItem>?,
+    onItemClick: (Int) -> Unit,
+    onTabSelected: (Difficulty) -> Unit
+) {
+    var tabPage by remember { mutableStateOf(Difficulty.Easy) }
+    val backgroundColor by animateColorAsState(if (tabPage == Difficulty.Easy) Green200 else if (tabPage == Difficulty.Medium) Yellow200 else Red200)
     Scaffold(
         topBar = { TopAppBar(title = { Text(text = "Select a category") }) }
     ) {
         list?.let {
             Column {
-                CategoriesList(list = list) {
-                    showDialog.value = true
-                    selectedCategory.value = it
-                }
-                DifficultyDialog(showDialog.value, { showDialog.value = false }) { difficulty ->
-                    onLevelSelected(
-                        difficulty,
-                        selectedCategory.value?.id ?: error("No Category selected"),
-                        selectedCategory.value?.name ?: error("No Category selected")
-                    )
-                }
+                DifficultyTabBar(
+                    backgroundColor = backgroundColor,
+                    tabPage = tabPage,
+                    onTabSelected = {
+                        tabPage = it
+                        onTabSelected(it)
+                    },
+                )
+                CategoriesList(list = list) { onItemClick(it.id) }
             }
         } ?: run {
             Column(
@@ -135,6 +135,7 @@ fun ScreenPreview() {
                 TriviaIcons.Knowledge,
                 TriviaColors.White
             )
-        )
-    ) { _, _, _ -> }
+        ),
+        {}
+    ) {}
 }

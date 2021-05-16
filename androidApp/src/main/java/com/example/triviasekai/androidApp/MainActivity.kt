@@ -25,6 +25,7 @@ import androidx.navigation.compose.*
 import com.example.triviasekai.androidApp.categories.CategoriesScreen
 import com.example.triviasekai.androidApp.questions.QuestionsScreen
 import com.example.triviasekai.androidApp.ui.TriviaTheme
+import com.example.triviasekai.shared.model.Difficulty
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,15 +54,18 @@ fun MainContainer(viewModel: TriviaViewModel) {
             }
         }
         composable("categories") {
-            CategoriesScreen(viewModel = viewModel) { level, categoryId, title ->
-                viewModel.getQuestions(categoryId, level)
+            CategoriesScreen(viewModel = viewModel) { categoryId ->
+                viewModel.getQuestions(categoryId)
                 navController.navigate("questions")
             }
         }
         composable("questions") {
             QuestionsScreen(
                 viewModel,
-                { navController.popBackStack() },
+                {
+                    navController.popBackStack()
+                    viewModel.selectDifficulty(Difficulty.Easy)
+                },
                 { navController.navigate("endGame") { popUpTo(route = "categories"){} } }
             )
         }
