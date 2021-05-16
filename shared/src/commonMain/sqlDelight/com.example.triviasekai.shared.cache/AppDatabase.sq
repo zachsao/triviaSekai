@@ -1,0 +1,17 @@
+CREATE TABLE HighScore (
+score INTEGER NOT NULL,
+category TEXT NOT NULL,
+difficulty TEXT NOT NULL
+);
+
+insertHighScore:
+INSERT INTO HighScore(score, category, difficulty)
+VALUES(?, ?, ?);
+
+updateHighScore:
+UPDATE HighScore
+SET score = ?
+WHERE category = ? AND difficulty = ?;
+
+selectAllHighScores:
+SELECT * FROM HighScore;

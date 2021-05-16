@@ -3,6 +3,7 @@
     package="com.example.triviasekai.androidApp">
 
     <application
+        android:name=".TriviaApp"
         android:allowBackup="false"
         android:label="@string/app_name"
         android:supportsRtl="true"

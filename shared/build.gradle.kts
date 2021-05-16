@@ -19,6 +19,12 @@ android {
 }
 
 kotlin {
+    val onPhone = System.getenv("SDK_NAME")?.startsWith("iphoneos") ?: false
+    if (onPhone) {
+        iosArm64("ios")
+    } else {
+        iosX64("ios")
+    }
     android()
     ios {
         binaries {
@@ -80,6 +86,13 @@ android {
     defaultConfig {
         minSdkVersion(24)
         targetSdkVersion(30)
+    }
+}
+
+sqldelight {
+    database("AppDatabase") {
+        packageName = "com.example.triviasekai.shared.cache"
+        sourceFolders = listOf("sqldelight")
     }
 }
 

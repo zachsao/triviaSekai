@@ -9,18 +9,21 @@ import com.example.triviasekai.androidApp.ui.TriviaIcons
 import com.example.triviasekai.shared.TriviaSDK
 import com.example.triviasekai.shared.model.Category
 import com.example.triviasekai.shared.model.Difficulty
+import com.example.triviasekai.shared.model.HighScore
 import com.example.triviasekai.shared.model.TriviaResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
-class TriviaViewModel : ViewModel() {
+@HiltViewModel
+class TriviaViewModel @Inject constructor(private val triviaSDK: TriviaSDK) : ViewModel() {
 
     private val categoriesSharedFlow = MutableSharedFlow<List<CategoryViewItem>>(replay = 1)
     private val currentQuestionSharedFlow = MutableSharedFlow<Pair<TriviaResult, Int>>()
-    private val triviaSDK = TriviaSDK()
 
     private var questions: List<TriviaResult>? = null
     private var currentCategory: Int? = null
@@ -42,10 +45,14 @@ class TriviaViewModel : ViewModel() {
     }
 
     fun getQuestions(categoryId: Int) {
-        currentCategory = categoryId
         viewModelScope.launch {
+            score = 0
+            currentCategory = categoryId
             val results =
-                triviaSDK.getQuestions(categoryId, currentDifficulty.name.toLowerCase(Locale.ROOT)).results
+                triviaSDK.getQuestions(
+                    categoryId,
+                    currentDifficulty.name.toLowerCase(Locale.ROOT)
+                ).results
             questions = results
             currentQuestionSharedFlow.emit(Pair(results.first(), 0))
         }
@@ -59,16 +66,32 @@ class TriviaViewModel : ViewModel() {
                     currentQuestionSharedFlow.emit(Pair(it[index], index))
                 } else {
                     navigate()
+                    updateHighScores()
                 }
             }
         }
     }
 
-    fun score() = Pair(score, questions?.size)
+    fun score() = Pair(score, questions?.size ?: error("questions is empty"))
 
     fun startOver() {
-        score = 0
         currentCategory?.let { getQuestions(it) }
+    }
+
+    fun highScores() = triviaSDK.getHighScores()
+
+    private fun updateHighScores() {
+        val highScores = triviaSDK.getHighScores().toMutableList()
+        val newHighScore = HighScore(questions?.first()?.category ?: error("category is null"), score, currentDifficulty)
+        if (
+            highScores.none { it.category == newHighScore.category && it.difficulty == newHighScore.difficulty }
+        ) {
+            triviaSDK.addHighScore(newHighScore)
+        } else if (
+            highScores.any { it.category == newHighScore.category && it.difficulty == newHighScore.difficulty && it.score < score}
+        ) {
+            triviaSDK.updateHighScore(newHighScore)
+        }
     }
 
     private fun Category.toViewItem(): CategoryViewItem {

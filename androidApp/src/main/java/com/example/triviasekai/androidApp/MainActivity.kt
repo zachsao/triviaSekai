@@ -13,7 +13,9 @@ import com.example.triviasekai.androidApp.home.HomeScreen
 import com.example.triviasekai.androidApp.questions.QuestionsScreen
 import com.example.triviasekai.androidApp.ui.TriviaTheme
 import com.example.triviasekai.shared.model.Difficulty
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<TriviaViewModel>()
