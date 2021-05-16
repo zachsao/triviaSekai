@@ -39,10 +39,10 @@ fun MainContainer(viewModel: TriviaViewModel) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
-            HomeScreen {
+            HomeScreen({
                 viewModel.getCategories()
                 navController.navigate("categories")
-            }
+            }) { navController.navigate("about") }
         }
         composable("categories") {
             CategoriesScreen(viewModel = viewModel) { categoryId ->
@@ -57,13 +57,18 @@ fun MainContainer(viewModel: TriviaViewModel) {
                     navController.popBackStack()
                     viewModel.selectDifficulty(Difficulty.Easy)
                 },
-                { navController.navigate("endGame") { popUpTo(route = "categories"){} } }
+                { navController.navigate("endGame") { popUpTo(route = "categories") {} } }
             )
         }
         composable("endGame") {
             EndGameScreen(viewModel = viewModel) {
                 viewModel.startOver()
-                navController.navigate("questions") { popUpTo(route = "categories"){} }
+                navController.navigate("questions") { popUpTo(route = "categories") {} }
+            }
+        }
+        composable("about") {
+            AboutScreen {
+                navController.popBackStack()
             }
         }
     }

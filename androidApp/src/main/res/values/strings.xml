@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Trivia Sekai</string>
-    <string name="icons_credit"><div>Icons made by <a href="https://www.flaticon.com/authors/turkkub" title="turkkub">turkkub</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/pause08" title="Pause08">Pause08</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/smalllikeart" title="smalllikeart">smalllikeart</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/photo3idea-studio" title="photo3idea_studio">photo3idea_studio</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></string>
+    <string name="icons_made_by">Icons made from flaticon.com by:</string>
     <string name="dialog_difficulty_title">Choose a difficulty</string>
     <string name="cancel">CANCEL</string>
     <string name="ok">OK</string>
+    <string-array name="icon_credits">
+        <item><a href="https://www.flaticon.com/authors/turkkub" title="turkkub">turkkub</a></item>
+        <item><a href="https://www.flaticon.com/authors/pause08" title="Pause08">Pause08</a></item>
+        <item><a href="https://www.flaticon.com/authors/smalllikeart" title="smalllikeart">smalllikeart</a></item>
+        <item><a href="https://www.flaticon.com/authors/photo3idea-studio" title="photo3idea_studio">photo3idea_studio</a></item>
+        <item><a href="https://www.freepik.com" title="Freepik">Freepik</a></item>
+    </string-array>
 </resources>
