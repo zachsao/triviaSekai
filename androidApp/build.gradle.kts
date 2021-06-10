@@ -35,11 +35,11 @@ dependencies {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = 30
     defaultConfig {
-        applicationId = "com.example.triviasekai.androidApp"
-        minSdkVersion(24)
-        targetSdkVersion(30)
+        applicationId = "com.dev.zachsao.triviasekai.androidApp"
+        minSdk = 24
+        targetSdk = 30
         versionCode = 1
         versionName = "1.0"
     }
