@@ -91,7 +91,7 @@ android {
 
 sqldelight {
     database("AppDatabase") {
-        packageName = "com.example.triviasekai.shared.cache"
+        packageName = "com.dev.zachsao.triviasekai.shared.cache"
         sourceFolders = listOf("sqldelight")
     }
 }
